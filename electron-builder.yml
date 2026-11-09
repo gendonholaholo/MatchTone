@@ -1,0 +1,46 @@
+appId: org.matchtone.desktop
+productName: MatchTone
+copyright: Copyright © 2026 MatchTone Contributors (GPL-3.0-or-later)
+directories:
+  buildResources: build
+  output: release
+files:
+  - out/**/*
+  - package.json
+extraResources:
+  - from: color-engine/dist/color-engine
+    to: sidecar
+    filter:
+      - "**/*"
+afterPack: build/afterPack.cjs
+asar: true
+mac:
+  category: public.app-category.photography
+  icon: build/icon.icns
+  identity: "-"
+  hardenedRuntime: false
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  target:
+    - target: dmg
+      arch:
+        - arm64
+    - target: zip
+      arch:
+        - arm64
+dmg:
+  artifactName: ${productName}-${version}-${arch}.${ext}
+win:
+  icon: build/icon.png
+  target:
+    - target: nsis
+      arch:
+        - x64
+linux:
+  icon: build/icon.png
+  category: Graphics
+  target:
+    - target: AppImage
+      arch:
+        - x64

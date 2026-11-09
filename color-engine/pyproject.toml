@@ -1,0 +1,59 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "color-engine"
+version = "0.1.0"
+description = "MatchTone color transfer sidecar engine powered by color-matcher"
+license = { text = "GPL-3.0-or-later" }
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "color-matcher==0.6.0",
+    "fastapi>=0.115.0",
+    "imageio>=2.36.0",
+    "numpy>=1.26.0",
+    "pillow>=11.0.0",
+    "psutil>=6.1.0",
+    "pydantic>=2.10.0",
+    "python-multipart>=0.0.18",
+    "scipy>=1.14.0",
+    "uvicorn>=0.32.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "httpx>=0.28.0",
+    "pyinstaller>=6.11.0",
+    "pyright>=1.1.390",
+    "pytest>=8.3.0",
+    "ruff>=0.8.0",
+]
+
+[project.scripts]
+color-engine = "color_engine.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/color_engine"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "tests"]
+exclude = [".venv", "build", "dist"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C4", "UP", "SIM", "NPY", "FAST", "RUF"]
+
+[tool.pyright]
+include = ["src", "tests"]
+exclude = ["**/__pycache__", ".venv", "build", "dist"]
+stubPath = "typings"
+pythonVersion = "3.12"
+typeCheckingMode = "strict"
+venvPath = "."
+venv = ".venv"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

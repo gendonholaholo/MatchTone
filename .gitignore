@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+.venv/
+color-engine/.venv/
+
+# Python bytecode & caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Build & packaging outputs
+out/
+dist/
+release/
+color-engine/build/
+color-engine/dist/
+*.tsbuildinfo
+
+# Logs & runtime state
+logs/
+*.log
+*.jsonl
+
+# Environment
+.env*
+!.env.example
+
+# OS metadata
+.DS_Store
+Thumbs.db

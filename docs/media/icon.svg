@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" fill="none" role="img" aria-label="MatchTone Icon">
+  <title>MatchTone Icon</title>
+  <defs>
+    <linearGradient id="bg" x1="112" y1="88" x2="912" y2="936" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#18181B"/>
+      <stop offset="55%" stop-color="#121215"/>
+      <stop offset="100%" stop-color="#09090B"/>
+    </linearGradient>
+    <linearGradient id="leftTone" x1="190" y1="220" x2="512" y2="804" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="55%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#722ED1"/>
+    </linearGradient>
+    <linearGradient id="rightTone" x1="512" y1="220" x2="834" y2="804" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#C084FC"/>
+      <stop offset="50%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#722ED1"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="160" y1="160" x2="864" y2="864" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#A855F7" stop-opacity="0.65"/>
+      <stop offset="100%" stop-color="#722ED1" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+  <rect x="64" y="64" width="896" height="896" rx="212" fill="url(#bg)"/>
+  <rect x="68" y="68" width="888" height="888" rx="208" stroke="url(#ring)" stroke-width="8"/>
+  <path d="M512 224C352.942 224 224 352.942 224 512C224 671.058 352.942 800 512 800V224Z" fill="url(#leftTone)"/>
+  <path d="M512 224C671.058 224 800 352.942 800 512C800 671.058 671.058 800 512 800V224Z" fill="url(#rightTone)"/>
+  <circle cx="512" cy="512" r="144" fill="#09090B" fill-opacity="0.88"/>
+  <path d="M512 396C447.935 396 396 447.935 396 512C396 576.065 447.935 628 512 628V396Z" fill="#FAF5FF" fill-opacity="0.92"/>
+  <path d="M512 396C576.065 396 628 447.935 628 512C628 576.065 576.065 628 512 628V396Z" fill="#A855F7"/>
+  <rect x="498" y="180" width="28" height="664" rx="14" fill="#FAF5FF"/>
+  <circle cx="512" cy="512" r="46" fill="#722ED1" stroke="#FAF5FF" stroke-width="14"/>
+</svg>
