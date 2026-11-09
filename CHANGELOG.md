@@ -5,6 +5,12 @@ All notable changes to **MatchTone** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-11-09
+
+### Fixed
+
+- Added zero-config photographic protection pipeline (`_regularized_mkl_transfer` + `_apply_photographic_luma_lock`) in `color-engine` to eliminate 84× minor-axis covariance blowups on indoor/selfie portraits, prevent JPEG sky banding from raw histogram matching, preserve original luminance gradients (`YCbCr`), guard specular highlights (eyes, skin, clouds), and replace global min-max outlier compression with safe `[0, 1]` clipping.
+
 ## [0.1.0] - 2026-11-09
 
 ### Added

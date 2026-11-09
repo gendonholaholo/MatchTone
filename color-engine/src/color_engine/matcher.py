@@ -278,6 +278,85 @@ def decode_image_path(
     return decode_image_bytes(raw_bytes, keep_alpha=keep_alpha, label=display_label)
 
 
+def _regularized_mkl_transfer(
+    src_arr: np.ndarray,
+    ref_arr: np.ndarray,
+) -> tuple[np.ndarray, float]:
+    """Compute Tikhonov-regularized MKL color transfer using symmetric eigh."""
+    r = src_arr.reshape(-1, 3).T
+    z = ref_arr.reshape(-1, 3).T
+    mu_r = r.mean(axis=1, keepdims=True)
+    mu_z = z.mean(axis=1, keepdims=True)
+
+    raw_cov_r = np.cov(r)
+    raw_cov_z = np.cov(z)
+    if np.ndim(raw_cov_r) < 2 or np.ndim(raw_cov_z) < 2:
+        return np.clip(src_arr - mu_r.T + mu_z.T, 0.0, 1.0), 1.0
+
+    eig_raw = np.linalg.eigvalsh(raw_cov_r)
+    min_eig = max(float(eig_raw[0]), 1e-9)
+    max_eig = max(float(eig_raw[-1]), 1e-9)
+    cond_val = max_eig / min_eig
+
+    # Adaptive damping prevents minor-axis chroma noise blowup on portraits/indoor photos
+    reg_eps = 0.018 if cond_val > 150.0 else 0.014
+    cov_r = raw_cov_r + np.eye(3, dtype=np.float64) * reg_eps
+    cov_z = raw_cov_z + np.eye(3, dtype=np.float64) * (reg_eps * 0.5)
+
+    eig_val_r, eig_vec_r = np.linalg.eigh(cov_r)
+    eig_val_r = np.maximum(eig_val_r, 1e-6)
+    val_r = np.diag(np.sqrt(eig_val_r))
+    inv_r = np.diag(1.0 / np.sqrt(eig_val_r))
+
+    mat_c = val_r @ eig_vec_r.T @ cov_z @ eig_vec_r @ val_r
+    eig_val_c, eig_vec_c = np.linalg.eigh(mat_c)
+    eig_val_c = np.maximum(eig_val_c, 0.0)
+    val_c = np.diag(np.sqrt(eig_val_c))
+
+    transfer_mat = eig_vec_r @ inv_r @ eig_vec_c @ val_c @ eig_vec_c.T @ inv_r @ eig_vec_r.T
+    res = (transfer_mat @ (r - mu_r) + mu_z).T.reshape(src_arr.shape)
+    return np.clip(res, 0.0, 1.0), cond_val
+
+
+def _apply_photographic_luma_lock(
+    src_rgb: Image.Image,
+    palette_arr: np.ndarray,
+    *,
+    cond_val: float,
+) -> Image.Image:
+    """Preserve original luminance gradients and guard specular highlights in YCbCr."""
+    pal_u8 = np.clip(np.round(palette_arr * 255.0), 0.0, 255.0).astype(np.uint8)
+    pal_img = Image.fromarray(pal_u8, mode="RGB")
+
+    src_ycbcr = np.asarray(src_rgb.convert("YCbCr"), dtype=np.float64)
+    pal_ycbcr = np.asarray(pal_img.convert("YCbCr"), dtype=np.float64)
+
+    # Retain original luminance structure so skies/walls never band and shadows stay crisp
+    luma_keep = 0.70 if cond_val > 150.0 else 0.65
+    y_orig = src_ycbcr[:, :, 0] / 255.0
+    y_pal = pal_ycbcr[:, :, 0] / 255.0
+    y_blend = luma_keep * y_orig + (1.0 - luma_keep) * y_pal
+
+    # Gentle filmic S-curve toe/shoulder roll-off
+    y_filmic = np.clip(y_blend - 0.045 * np.sin(2.0 * np.pi * y_blend), 0.0, 1.0)
+
+    chroma_scale = 1.08 if cond_val > 150.0 else 1.12
+    cb_out = 128.0 + (pal_ycbcr[:, :, 1] - 128.0) * chroma_scale
+    cr_out = 128.0 + (pal_ycbcr[:, :, 2] - 128.0) * chroma_scale
+
+    # Specular highlight guard keeps eye sclera, teeth, and bright clouds from heavy tinting
+    hi_mask = np.clip((y_orig - 0.70) / 0.25, 0.0, 1.0) * 0.75
+    cb_out = cb_out * (1.0 - hi_mask) + src_ycbcr[:, :, 1] * hi_mask
+    cr_out = cr_out * (1.0 - hi_mask) + src_ycbcr[:, :, 2] * hi_mask
+
+    out_ycbcr = np.empty_like(src_ycbcr)
+    out_ycbcr[:, :, 0] = np.round(y_filmic * 255.0)
+    out_ycbcr[:, :, 1] = np.clip(cb_out, 0.0, 255.0)
+    out_ycbcr[:, :, 2] = np.clip(cr_out, 0.0, 255.0)
+
+    return Image.fromarray(out_ycbcr.astype(np.uint8), mode="YCbCr").convert("RGB")
+
+
 def run_color_transfer(
     src: DecodedImage,
     ref_rgb: Image.Image,
@@ -294,10 +373,10 @@ def run_color_transfer(
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             cm = ColorMatcher()
-            raw_res = cm.transfer(src=src_arr, ref=ref_arr, method=method)
+            raw_res = cm.transfer(src=src_arr.copy(), ref=ref_arr.copy(), method=method)
             real_res = np.asarray(np.real(raw_res), dtype=np.float64)
             if not np.isfinite(real_res).all():
-                fallback_res = cm.transfer(src=src_arr, ref=ref_arr, method="hm")
+                fallback_res = cm.transfer(src=src_arr.copy(), ref=ref_arr.copy(), method="hm")
                 real_res = np.asarray(np.real(fallback_res), dtype=np.float64)
     except (KeyboardInterrupt, SystemExit, asyncio.CancelledError):
         raise
@@ -315,12 +394,25 @@ def run_color_transfer(
             f"Color transfer produced non-finite pixel values ({method}).",
         )
 
-    if float(real_res.max()) > float(real_res.min()):
-        matched_u8 = Normalizer(real_res).uint8_norm()
-    else:
-        matched_u8 = np.clip(np.round(real_res * 255.0), 0.0, 255.0).astype(np.uint8)
+    clipped_raw = np.clip(real_res, 0.0, 1.0)
+    reg_mkl, cond_val = _regularized_mkl_transfer(src_arr, ref_arr)
 
-    transferred_rgb = Image.fromarray(matched_u8, mode="RGB")
+    if method in ("mkl", "mvgd"):
+        palette_arr = reg_mkl
+    elif cond_val > 150.0:
+        # Ill-conditioned portrait covariance: prioritize regularized solver
+        palette_arr = np.clip(0.90 * reg_mkl + 0.10 * clipped_raw, 0.0, 1.0)
+    elif method in ("hm-mvgd-hm", "hm-mkl-hm"):
+        palette_arr = np.clip(0.85 * reg_mkl + 0.15 * clipped_raw, 0.0, 1.0)
+    else:
+        # 'reinhard' or 'hm'
+        palette_arr = np.clip(0.55 * clipped_raw + 0.45 * reg_mkl, 0.0, 1.0)
+
+    transferred_rgb = _apply_photographic_luma_lock(
+        src.rgb,
+        palette_arr,
+        cond_val=cond_val,
+    )
     if intensity < 100.0:
         return Image.blend(src.rgb, transferred_rgb, intensity / 100.0)
     return transferred_rgb

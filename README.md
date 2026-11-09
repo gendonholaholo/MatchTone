@@ -11,7 +11,7 @@
   </p>
 
   <p>
-    <a href="https://github.com/gendonholaholo/MatchTone/releases"><img src="https://img.shields.io/badge/version-v0.1.0-722ED1?style=flat-square" alt="Version v0.1.0" /></a>
+    <a href="https://github.com/gendonholaholo/MatchTone/releases"><img src="https://img.shields.io/badge/version-v0.1.1-722ED1?style=flat-square" alt="Version v0.1.1" /></a>
     <a href="https://github.com/gendonholaholo/MatchTone/releases"><img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-18181B?style=flat-square" alt="Platform" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-10B981?style=flat-square" alt="License GPL-3.0" /></a>
     <a href="https://github.com/hahnec/color-matcher"><img src="https://img.shields.io/badge/powered%20by-color--matcher-722ED1?style=flat-square" alt="Powered by color-matcher" /></a>

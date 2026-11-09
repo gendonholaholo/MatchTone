@@ -76,12 +76,12 @@ def _decode_data_url(data_url: str) -> tuple[str, bytes]:
 
 
 def test_dynamic_version_and_tomllib_fallback() -> None:
-    assert __version__ == "0.1.0"
+    assert __version__ == "0.1.1"
     with patch(
         "importlib.metadata.version",
         side_effect=importlib.metadata.PackageNotFoundError("color-engine"),
     ):
-        assert get_version() == "0.1.0"
+        assert get_version() == "0.1.1"
 
 
 def test_favicon_and_health_contract() -> None:
@@ -95,7 +95,7 @@ def test_favicon_and_health_contract() -> None:
         body = res.json()
         assert body["status"] == "ok"
         assert body["ready"] is True
-        assert body["version"] == "0.1.0"
+        assert body["version"] == "0.1.1"
         assert body["engine"] == "color-matcher"
         assert body["engine_version"] == "0.6.0"
         assert body["methods"] == list(SUPPORTED_METHODS)
@@ -587,5 +587,50 @@ def test_hm_mvgd_hm_preserves_luminance_order_on_opposite_spatial_layouts() -> N
         out_arr = np.asarray(Image.open(BytesIO(out_bytes)).convert("RGB"), dtype=np.float64)
         # Top sky of source must remain brighter than bottom water (no spatial solarization)
         assert float(out_arr[:12].mean()) > float(out_arr[-12:].mean()) + 40.0
+
+    _run_with_client(_case)
+
+
+def test_ill_conditioned_portrait_prevents_cyan_highlight_solarization() -> None:
+    """Ensure high-condition-number portraits (collinear RGB + bright sclera) never solarize."""
+    h, w = 64, 48
+    src_arr = np.zeros((h, w, 3), dtype=np.uint8)
+    # Top half: dark hair (tightly collinear RGB)
+    src_arr[:28, :] = [14, 12, 11]
+    # Bottom half: warm skin
+    src_arr[28:, :] = [215, 178, 162]
+    # Small specular sclera patch (slightly cool white)
+    src_arr[32:38, 18:28] = [235, 240, 246]
+
+    # Reference: bimodal dark teal + bright orange clouds
+    ref_arr = np.zeros((h, w, 3), dtype=np.uint8)
+    ref_arr[:32, :] = [8, 42, 58]
+    ref_arr[32:, :] = [238, 128, 24]
+
+    src_buf, ref_buf = BytesIO(), BytesIO()
+    Image.fromarray(src_arr, mode="RGB").save(src_buf, format="PNG")
+    Image.fromarray(ref_arr, mode="RGB").save(ref_buf, format="PNG")
+
+    async def _case(client: httpx.AsyncClient) -> None:
+        res = await client.post(
+            "/v1/match/single",
+            files={
+                "src_file": ("selfie.png", src_buf.getvalue(), "image/png"),
+                "ref_file": ("cinema.png", ref_buf.getvalue(), "image/png"),
+            },
+            data={"method": "hm-mvgd-hm", "intensity": "100"},
+        )
+        assert res.status_code == 200
+        _, out_bytes = _decode_data_url(res.json()["preview_data_url"])
+        out_im = np.asarray(Image.open(BytesIO(out_bytes)).convert("RGB"), dtype=np.float64)
+
+        hair_luma = float(out_im[:28, :].mean())
+        skin_luma = float(out_im[40:, :].mean())
+        sclera_patch = out_im[32:38, 18:28]
+        sclera_luma = float(sclera_patch.mean())
+        # Luminance hierarchy must remain hair < skin < sclera
+        assert hair_luma < skin_luma < sclera_luma
+        # Sclera must not blow up into radioactive cyan (Blue - Red < 60)
+        assert abs(float(sclera_patch[..., 2].mean()) - float(sclera_patch[..., 0].mean())) < 60.0
 
     _run_with_client(_case)
