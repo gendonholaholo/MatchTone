@@ -1,8 +1,6 @@
 import {
   APP_VERSION,
   type BatchMatchResponse,
-  COLOR_METHODS,
-  type ColorMethodId,
   type EngineHealthResponse,
   type MainProcessTelemetry,
   OUTPUT_FORMATS,
@@ -14,7 +12,6 @@ import {
   Activity,
   AlertTriangle,
   ArrowLeftRight,
-  ChevronDown,
   ChevronLeft,
   Download,
   FolderOpen,
@@ -51,8 +48,6 @@ interface SidebarProps {
   reference: ImageAsset | null;
   batchFiles: ImageAsset[];
   batchDir: PickedDirectoryResult | null;
-  method: ColorMethodId;
-  onMethodChange: (method: ColorMethodId) => void;
   strength: number;
   onStrengthChange: (strength: number) => void;
   outputFormat: OutputFormat;
@@ -100,8 +95,6 @@ export function Sidebar({
   reference,
   batchFiles,
   batchDir,
-  method,
-  onMethodChange,
   strength,
   onStrengthChange,
   outputFormat,
@@ -524,32 +517,17 @@ export function Sidebar({
               )}
             </div>
 
-            {/* Step 3: Method & Strength */}
+            {/* Step 3: Output & Strength */}
             <div className="space-y-3 rounded-xl border border-zinc-800/90 bg-[#18181B] p-3">
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="method-select"
-                  className="text-[11px] font-semibold tracking-wide text-zinc-400 uppercase"
-                >
-                  Step 3 · Method
-                </label>
-              </div>
-
-              <div className="relative">
-                <select
-                  id="method-select"
-                  value={method}
-                  disabled={isProcessing}
-                  onChange={(e) => onMethodChange(e.target.value as ColorMethodId)}
-                  className="w-full appearance-none rounded-lg border border-zinc-700/90 bg-zinc-900 py-2 pr-8 pl-3 text-xs font-semibold text-zinc-100 transition focus:border-[#722ED1] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#722ED1]/40 disabled:opacity-50"
-                >
-                  {COLOR_METHODS.map((item) => (
-                    <option key={item.id} value={item.id} className="bg-zinc-900 text-zinc-100">
-                      {item.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute top-1/2 right-2.5 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400" />
+              <div className="flex items-center justify-between gap-2">
+                <span className="shrink-0 text-[11px] font-semibold tracking-wide text-zinc-400 uppercase">
+                  Step 3 · Output & Strength
+                </span>
+                <span className="truncate text-[11px] text-zinc-400">
+                  {isDesktop
+                    ? `Folder: ${outputDir ? extractBasename(outputDir) : 'Source Folder'}`
+                    : 'Manual Download'}
+                </span>
               </div>
 
               <div>
@@ -587,20 +565,6 @@ export function Sidebar({
                   }}
                   className="matchtone-slider w-full disabled:opacity-50"
                 />
-              </div>
-            </div>
-
-            {/* Step 4: Output */}
-            <div className="space-y-2 rounded-xl border border-zinc-800/90 bg-[#18181B] p-3">
-              <div className="flex items-center justify-between gap-2">
-                <span className="shrink-0 text-[11px] font-semibold tracking-wide text-zinc-400 uppercase">
-                  Step 4 · Output
-                </span>
-                <span className="truncate text-[11px] text-zinc-400">
-                  {isDesktop
-                    ? `Folder: ${outputDir ? extractBasename(outputDir) : 'Source Folder'}`
-                    : 'Manual Download'}
-                </span>
               </div>
 
               <div className="grid grid-cols-4 gap-1 rounded-lg border border-zinc-800 bg-zinc-950 p-1">
@@ -651,23 +615,22 @@ export function Sidebar({
             </div>
           </div>
 
-          {/* Step 5: Run Action Footer */}
+          {/* Primary Action Footer */}
           <div className="space-y-2 border-t border-zinc-800/80 pt-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold tracking-wide text-zinc-400 uppercase">
-                Step 5 · Run
-              </span>
-              {readinessHint ? (
-                <span className="rounded-md border border-zinc-700/80 bg-zinc-900 px-2 py-0.5 text-[10px] font-medium text-zinc-300">
-                  {readinessHint}
-                </span>
-              ) : isAutoUpdating && !batchMode ? (
-                <span className="inline-flex items-center gap-1 rounded-md border border-[#722ED1]/50 bg-[#722ED1]/15 px-2 py-0.5 text-[10px] font-semibold text-[#FAF5FF]">
-                  <Loader2 className="h-2.5 w-2.5 animate-spin text-[#A855F7]" />
-                  <span>Updating…</span>
-                </span>
-              ) : null}
-            </div>
+            {(readinessHint || (isAutoUpdating && !batchMode)) && (
+              <div className="flex items-center justify-end">
+                {readinessHint ? (
+                  <span className="rounded-md border border-zinc-700/80 bg-zinc-900 px-2 py-0.5 text-[10px] font-medium text-zinc-300">
+                    {readinessHint}
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 rounded-md border border-[#722ED1]/50 bg-[#722ED1]/15 px-2 py-0.5 text-[10px] font-semibold text-[#FAF5FF]">
+                    <Loader2 className="h-2.5 w-2.5 animate-spin text-[#A855F7]" />
+                    <span>Updating…</span>
+                  </span>
+                )}
+              </div>
+            )}
 
             <button
               type="button"
@@ -782,49 +745,24 @@ export function Sidebar({
               </div>
 
               {isDesktop ? (
-                <div className="space-y-2 border-t border-zinc-800/80 pt-2.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-zinc-200">Auto-Save to Folder</span>
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={autoSaveDesktop}
-                      aria-label="Auto-Save to Folder"
-                      onClick={() => onToggleAutoSaveDesktop(!autoSaveDesktop)}
-                      className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition ${
-                        autoSaveDesktop ? 'bg-[#722ED1]' : 'bg-zinc-700'
+                <div className="flex items-center justify-between border-t border-zinc-800/80 pt-2.5">
+                  <span className="text-xs font-medium text-zinc-200">Auto-Save to Folder</span>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={autoSaveDesktop}
+                    aria-label="Auto-Save to Folder"
+                    onClick={() => onToggleAutoSaveDesktop(!autoSaveDesktop)}
+                    className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition ${
+                      autoSaveDesktop ? 'bg-[#722ED1]' : 'bg-zinc-700'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-3.5 w-3.5 transform rounded-full bg-[#FAF5FF] transition ${
+                        autoSaveDesktop ? 'translate-x-4.5' : 'translate-x-1'
                       }`}
-                    >
-                      <span
-                        className={`inline-block h-3.5 w-3.5 transform rounded-full bg-[#FAF5FF] transition ${
-                          autoSaveDesktop ? 'translate-x-4.5' : 'translate-x-1'
-                        }`}
-                      />
-                    </button>
-                  </div>
-
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={onPickOutputDir}
-                      className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-200 transition hover:border-[#722ED1] hover:text-[#FAF5FF]"
-                    >
-                      <FolderOpen className="h-3.5 w-3.5 text-[#A855F7]" />
-                      <span className="truncate">
-                        {outputDir ? extractBasename(outputDir) : 'Choose Output Folder'}
-                      </span>
-                    </button>
-                    {outputDir && (
-                      <button
-                        type="button"
-                        onClick={onClearOutputDir}
-                        aria-label="Clear output folder"
-                        className="rounded-lg border border-zinc-800 bg-zinc-900 p-1.5 text-zinc-400 hover:text-zinc-100"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                  </div>
+                    />
+                  </button>
                 </div>
               ) : (
                 <div className="flex items-center justify-between border-t border-zinc-800/80 pt-2 text-xs">

@@ -5,6 +5,14 @@ All notable changes to **MatchTone** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2026-11-09
+
+### Changed
+
+- Streamlined the desktop sidebar into a zero-config 3-step workflow (`Step 1 · Your Photo`, `Step 2 · Color Reference`, `Step 3 · Output & Strength`), removing the technical transfer-method selector, redundant step headers, and duplicate folder pickers.
+- Unified all color-transfer requests around the regularized Monge-Kantorovitch + `YCbCr` luminance-lock photographic pipeline so both landscape skies and indoor/outdoor portraits grade cleanly without blotchy histogram artifacts or cyan highlight blowups.
+- Updated `README.md`, example comparison photographs, real application screenshots, and the HyperFrames simulation video (`docs/media/matchtone-demo.mp4` & `.gif`) to reflect the `v0.1.2` UI and photographic engine.
+
 ## [0.1.1] - 2026-11-09
 
 ### Fixed

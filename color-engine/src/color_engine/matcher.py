@@ -402,11 +402,8 @@ def run_color_transfer(
     elif cond_val > 150.0:
         # Ill-conditioned portrait covariance: prioritize regularized solver
         palette_arr = np.clip(0.90 * reg_mkl + 0.10 * clipped_raw, 0.0, 1.0)
-    elif method in ("hm-mvgd-hm", "hm-mkl-hm"):
-        palette_arr = np.clip(0.85 * reg_mkl + 0.15 * clipped_raw, 0.0, 1.0)
     else:
-        # 'reinhard' or 'hm'
-        palette_arr = np.clip(0.55 * clipped_raw + 0.45 * reg_mkl, 0.0, 1.0)
+        palette_arr = np.clip(0.85 * reg_mkl + 0.15 * clipped_raw, 0.0, 1.0)
 
     transferred_rgb = _apply_photographic_luma_lock(
         src.rgb,

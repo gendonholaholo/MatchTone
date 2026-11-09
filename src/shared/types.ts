@@ -1,45 +1,6 @@
-export const APP_VERSION = '0.1.1';
+export const APP_VERSION = '0.1.2';
 
-export const COLOR_METHODS = [
-  {
-    id: 'hm-mvgd-hm',
-    label: 'Best Quality (HM-MVGD-HM)',
-    shortLabel: 'HM-MVGD-HM',
-    tag: 'Best',
-  },
-  {
-    id: 'hm-mkl-hm',
-    label: 'Balanced (HM-MKL-HM)',
-    shortLabel: 'HM-MKL-HM',
-    tag: 'Balanced',
-  },
-  {
-    id: 'mkl',
-    label: 'Smooth Linear (MKL)',
-    shortLabel: 'MKL',
-    tag: 'Linear',
-  },
-  {
-    id: 'mvgd',
-    label: 'Rich Gaussian (MVGD)',
-    shortLabel: 'MVGD',
-    tag: 'Gaussian',
-  },
-  {
-    id: 'reinhard',
-    label: 'Natural Contrast (Reinhard)',
-    shortLabel: 'Reinhard',
-    tag: 'Lab',
-  },
-  {
-    id: 'hm',
-    label: 'Classic Histogram (HM)',
-    shortLabel: 'HM',
-    tag: 'Histogram',
-  },
-] as const;
-
-export type ColorMethodId = (typeof COLOR_METHODS)[number]['id'];
+export type ColorMethodId = 'hm-mvgd-hm' | 'hm-mkl-hm' | 'mkl' | 'mvgd' | 'reinhard' | 'hm';
 
 export const DEFAULT_METHOD: ColorMethodId = 'hm-mvgd-hm';
 

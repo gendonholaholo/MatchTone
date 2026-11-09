@@ -4,7 +4,6 @@ import { type KeyboardEvent, type PointerEvent, useCallback, useRef, useState } 
 interface BeforeAfterSliderProps {
   beforeUrl: string | null;
   afterUrl: string;
-  methodShortLabel: string;
   intensity: number;
   width: number;
   height: number;
@@ -14,7 +13,6 @@ interface BeforeAfterSliderProps {
 export function BeforeAfterSlider({
   beforeUrl,
   afterUrl,
-  methodShortLabel,
   intensity,
   width,
   height,
@@ -109,7 +107,7 @@ export function BeforeAfterSlider({
             </span>
           )}
           <span className="shrink-0 rounded-lg border border-[#722ED1]/60 bg-[#722ED1] px-2.5 py-1 text-[11px] font-semibold text-[#FAF5FF] shadow-sm">
-            Matched · {methodShortLabel} · {Math.round(intensity)}%
+            Matched · {Math.round(intensity)}%
           </span>
         </div>
       </div>

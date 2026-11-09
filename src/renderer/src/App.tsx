@@ -1,8 +1,6 @@
 import {
   ACCEPTED_FILE_INPUT,
   type BatchMatchResponse,
-  COLOR_METHODS,
-  type ColorMethodId,
   DEFAULT_FILENAME_SUFFIX,
   DEFAULT_METHOD,
   DEFAULT_OUTPUT_FORMAT,
@@ -82,7 +80,6 @@ export function App() {
   const [batchFiles, setBatchFiles] = useState<ImageAsset[]>([]);
   const [batchDir, setBatchDir] = useState<PickedDirectoryResult | null>(null);
 
-  const [method, setMethod] = useState<ColorMethodId>(DEFAULT_METHOD);
   const [strength, setStrength] = useState<number>(DEFAULT_STRENGTH);
   const [outputFormat, setOutputFormat] = useState<OutputFormat>(DEFAULT_OUTPUT_FORMAT);
   const [filenameSuffix, setFilenameSuffix] = useState<string>(DEFAULT_FILENAME_SUFFIX);
@@ -370,7 +367,7 @@ export function App() {
     replaceSourceAsset,
   ]);
 
-  // Live Auto-Update when adjusting Strength (150ms debounce), Method (immediate), Format (immediate), or Suffix
+  // Live Auto-Update when adjusting Strength (150ms debounce), Format (immediate), or Suffix
   useEffect(() => {
     if (
       batchMode ||
@@ -385,16 +382,15 @@ export function App() {
     }
 
     const normalizedSuffix = filenameSuffix.trim() || DEFAULT_FILENAME_SUFFIX;
-    const methodChanged = singleResult.method !== method;
     const formatChanged = singleResult.format !== outputFormat;
     const strengthChanged = Math.round(singleResult.intensity) !== strength;
     const suffixChanged = lastAppliedSuffixRef.current !== normalizedSuffix;
 
-    if (!methodChanged && !formatChanged && !strengthChanged && !suffixChanged) {
+    if (!formatChanged && !strengthChanged && !suffixChanged) {
       return;
     }
 
-    const delayMs = methodChanged || formatChanged ? 0 : 150;
+    const delayMs = formatChanged ? 0 : 150;
     const timer = setTimeout(() => {
       if (autoUpdateAbortRef.current) {
         autoUpdateAbortRef.current.abort();
@@ -411,7 +407,7 @@ export function App() {
         baseUrl: engineUrl,
         source,
         reference,
-        method,
+        method: DEFAULT_METHOD,
         intensity: strength,
         outputFormat,
         outputDir: isDesktop ? outputDir.trim() || null : null,
@@ -458,7 +454,6 @@ export function App() {
     filenameSuffix,
     isDesktop,
     isProcessing,
-    method,
     outputDir,
     outputFormat,
     reference,
@@ -631,7 +626,7 @@ export function App() {
           batchDirPath: batchDir?.path ?? null,
           batchFiles,
           reference,
-          method,
+          method: DEFAULT_METHOD,
           intensity: strength,
           outputFormat,
           outputDir: isDesktop ? outputDir.trim() || null : null,
@@ -661,7 +656,7 @@ export function App() {
           baseUrl: engineUrl,
           source,
           reference,
-          method,
+          method: DEFAULT_METHOD,
           intensity: strength,
           outputFormat,
           outputDir: isDesktop ? outputDir.trim() || null : null,
@@ -760,7 +755,6 @@ export function App() {
   };
 
   const handleResetDefaults = () => {
-    setMethod(DEFAULT_METHOD);
     setStrength(DEFAULT_STRENGTH);
     setOutputFormat(DEFAULT_OUTPUT_FORMAT);
     setFilenameSuffix(DEFAULT_FILENAME_SUFFIX);
@@ -775,7 +769,6 @@ export function App() {
     handleClearBatch();
     setBatchMode(false);
     setActiveTab('match');
-    setMethod(DEFAULT_METHOD);
     setStrength(DEFAULT_STRENGTH);
     setOutputFormat(DEFAULT_OUTPUT_FORMAT);
     setFilenameSuffix(DEFAULT_FILENAME_SUFFIX);
@@ -785,9 +778,6 @@ export function App() {
     setAlert(null);
     setActivePasteTarget('source');
   };
-
-  const activeMethodMeta =
-    COLOR_METHODS.find((m) => m.id === (singleResult?.method ?? method)) ?? COLOR_METHODS[0];
 
   const canSwapSingle = !batchMode && Boolean(source) && Boolean(reference) && !isProcessing;
   const hasBatchSource = batchDir ? batchDir.imageCount > 0 : batchFiles.length > 0;
@@ -868,8 +858,6 @@ export function App() {
           reference={reference}
           batchFiles={batchFiles}
           batchDir={batchDir}
-          method={method}
-          onMethodChange={setMethod}
           strength={strength}
           onStrengthChange={setStrength}
           outputFormat={outputFormat}
@@ -987,8 +975,7 @@ export function App() {
               batchResult={batchResult}
               isResultStale={
                 batchResult !== null &&
-                (batchResult.method !== method ||
-                  Math.round(batchResult.intensity) !== strength ||
+                (Math.round(batchResult.intensity) !== strength ||
                   batchResult.format !== outputFormat)
               }
               onRerunBatch={() => {
@@ -1113,7 +1100,6 @@ export function App() {
             <BeforeAfterSlider
               beforeUrl={source?.previewUrl ?? null}
               afterUrl={singleResult.preview_data_url}
-              methodShortLabel={activeMethodMeta.shortLabel}
               intensity={singleResult.intensity}
               width={singleResult.width}
               height={singleResult.height}

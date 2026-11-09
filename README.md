@@ -11,7 +11,7 @@
   </p>
 
   <p>
-    <a href="https://github.com/gendonholaholo/MatchTone/releases"><img src="https://img.shields.io/badge/version-v0.1.1-722ED1?style=flat-square" alt="Version v0.1.1" /></a>
+    <a href="https://github.com/gendonholaholo/MatchTone/releases"><img src="https://img.shields.io/badge/version-v0.1.2-722ED1?style=flat-square" alt="Version v0.1.2" /></a>
     <a href="https://github.com/gendonholaholo/MatchTone/releases"><img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-18181B?style=flat-square" alt="Platform" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-10B981?style=flat-square" alt="License GPL-3.0" /></a>
     <a href="https://github.com/hahnec/color-matcher"><img src="https://img.shields.io/badge/powered%20by-color--matcher-722ED1?style=flat-square" alt="Powered by color-matcher" /></a>
@@ -39,22 +39,22 @@
 
 ## Why MatchTone?
 
-[`color-matcher`](https://github.com/hahnec/color-matcher) is a brilliant scientific color-transfer engine, but running command-line flags just to match two photos breaks your creative flow.
+[`color-matcher`](https://github.com/hahnec/color-matcher) is a powerful scientific color-transfer library, but running CLI flags or tuning fragile math parameters breaks your creative flow.
 
-**MatchTone** wraps `color-matcher` in a fast, minimalist desktop studio inspired by [Upscayl](https://github.com/upscayl/upscayl). Drop your photo, drop a color reference, scrub the live **Before / After** split slider, and dial in the exact blend strength—100% offline on your machine.
+**MatchTone** turns reference color grading into a zero-config desktop studio inspired by [Upscayl](https://github.com/upscayl/upscayl). Drop your photo, drop any color reference, and click **Match Tone**—our photographic engine automatically locks natural luminance gradients and protects skin and sky highlights, 100% offline on your Mac.
 
 ---
 
 ## Real Photo Results
 
-Every example below was processed directly inside **MatchTone** (`HM-MVGD-HM` method at `100%` strength) using real-world photographs.
+Every example below was processed directly inside **MatchTone** (`100%` strength, zero manual adjustments) using real-world photographs.
 
 |                                          Source Photo (Before)                                           |                                       Color Reference (Target Mood)                                       |                                          MatchTone Result (After)                                          |
 | :------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------: |
 |    <img src="docs/media/examples/landscape-source.jpg" alt="Alpine Lake Source Photo" width="280" />     | <img src="docs/media/examples/landscape-reference.jpg" alt="Golden Sunset Reference Photo" width="280" /> |    <img src="docs/media/examples/landscape-matched.jpg" alt="Alpine Lake Matched Result" width="280" />    |
 |                    **Daylight Alpine Lake**<br/><sub>Cool midday mountain light</sub>                    |                    **Golden Hour Sunset**<br/><sub>Warm amber & magenta horizon</sub>                     |                **Golden Hour Grade**<br/><sub>Matched warmth with natural water & sky</sub>                |
 | <img src="docs/media/examples/portrait-source.jpg" alt="Natural Daylight Portrait Source" width="280" /> |     <img src="docs/media/examples/portrait-reference.jpg" alt="Moody Cinema Reference" width="280" />     | <img src="docs/media/examples/portrait-matched.jpg" alt="Cinematic Portrait Matched Result" width="280" /> |
-|               **Natural Daylight Portrait**<br/><sub>Neutral outdoor skin & foliage</sub>                |                    **Teal & Amber Cinema**<br/><sub>Moody tungsten-teal contrast</sub>                    |            **Cinematic Portrait Grade**<br/><sub>Balanced skin highlights & deep shadows</sub>             |
+|              **Natural Daylight Portrait**<br/><sub>Neutral outdoor skin & background</sub>              |                    **Teal & Amber Cinema**<br/><sub>Moody tungsten-teal contrast</sub>                    |           **Cinematic Portrait Grade**<br/><sub>Smooth teal shadows & natural skin warmth</sub>            |
 
 ---
 
@@ -81,9 +81,9 @@ Every example below was processed directly inside **MatchTone** (`HM-MVGD-HM` me
     <td width="50%" align="center">
       <img src="docs/media/app-split-portrait-50.png" alt="Portrait Color Transfer in MatchTone" width="100%" />
       <br />
-      <strong>3. Fine-Tune Method & Blend Strength</strong>
+      <strong>3. Dial In Blend Strength & Export Format</strong>
       <br />
-      <sub>Switch between 6 transfer algorithms and adjust the 0–100% Strength slider with live auto-update.</sub>
+      <sub>Adjust the 0–100% Strength slider with instant live blending and export to PNG, JPG, WEBP, or TIFF.</sub>
     </td>
     <td width="50%" align="center">
       <img src="docs/media/app-batch-real.png" alt="Batch Folder Processing Mode" width="100%" />
@@ -99,9 +99,9 @@ Every example below was processed directly inside **MatchTone** (`HM-MVGD-HM` me
 
 ## Features
 
-- **One-Click Reference Color Grading** — Transfer the color distribution of any reference photo, film frame, or painting onto your image without manual curves or LUT hunting.
-- **6 Official Transfer Methods** — Switch anytime between **Best Quality** (`HM-MVGD-HM`), **Balanced** (`HM-MKL-HM`), **Smooth Linear** (`MKL`), **Rich Gaussian** (`MVGD`), **Natural Contrast** (`Reinhard`), and **Classic Histogram** (`HM`).
-- **Live 0–100% Strength Slider** — Dial back strong looks effortlessly; adjusting the **Strength** slider blends the graded result with your original photo automatically.
+- **Zero-Config Photographic Color Transfer** — Transfer the color palette of any reference photo, film still, or painting onto your image in one click—no technical algorithm menus or manual curves required.
+- **Automatic Luminance & Highlight Protection** — Built-in regularized Monge-Kantorovitch covariance and `YCbCr` luminance locking preserve smooth skies, natural skin tones, and clean specular highlights even when matching extreme dark or high-contrast references.
+- **Live 0–100% Strength Slider** — Dial back strong looks effortlessly; adjusting the **Strength** slider blends the graded result with your original photo in real time.
 - **Interactive Before / After Split Canvas** — Full-bleed dark studio viewport with pointer-captured drag handle, keyboard arrow scrubbing, and automatic aspect-ratio scaling.
 - **Batch Mode with Visual Previews** — Queue multiple photos at once, inspect side-by-side `Before → Matched` thumbnails for every item, and save individual files or a single `.zip` archive.
 - **Broad Format & Alpha Support** — Load `JPG`, `PNG`, `WEBP`, `TIFF`, and `BMP` up to 50 MB each; export as `PNG`, `JPG`, `WEBP`, or `TIFF` with full transparency (`RGBA`) preservation.
