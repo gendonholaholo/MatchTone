@@ -76,12 +76,12 @@ def _decode_data_url(data_url: str) -> tuple[str, bytes]:
 
 
 def test_dynamic_version_and_tomllib_fallback() -> None:
-    assert __version__ == "0.1.2"
+    assert __version__ == "0.1.3"
     with patch(
         "importlib.metadata.version",
         side_effect=importlib.metadata.PackageNotFoundError("color-engine"),
     ):
-        assert get_version() == "0.1.2"
+        assert get_version() == "0.1.3"
 
 
 def test_favicon_and_health_contract() -> None:
@@ -95,7 +95,7 @@ def test_favicon_and_health_contract() -> None:
         body = res.json()
         assert body["status"] == "ok"
         assert body["ready"] is True
-        assert body["version"] == "0.1.2"
+        assert body["version"] == "0.1.3"
         assert body["engine"] == "color-matcher"
         assert body["engine_version"] == "0.6.0"
         assert body["methods"] == list(SUPPORTED_METHODS)

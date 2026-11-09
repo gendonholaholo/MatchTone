@@ -33,6 +33,7 @@ dmg:
   artifactName: ${productName}-${version}-${arch}.${ext}
 win:
   icon: build/icon.png
+  artifactName: ${productName}-Setup-${version}-${arch}.${ext}
   target:
     - target: nsis
       arch:
@@ -40,6 +41,7 @@ win:
 linux:
   icon: build/icon.png
   category: Graphics
+  artifactName: ${productName}-${version}-${arch}.${ext}
   target:
     - target: AppImage
       arch:

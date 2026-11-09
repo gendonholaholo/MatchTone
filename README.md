@@ -11,7 +11,7 @@
   </p>
 
   <p>
-    <a href="https://github.com/gendonholaholo/MatchTone/releases"><img src="https://img.shields.io/badge/version-v0.1.2-722ED1?style=flat-square" alt="Version v0.1.2" /></a>
+    <a href="https://github.com/gendonholaholo/MatchTone/releases"><img src="https://img.shields.io/badge/version-v0.1.3-722ED1?style=flat-square" alt="Version v0.1.3" /></a>
     <a href="https://github.com/gendonholaholo/MatchTone/releases"><img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-18181B?style=flat-square" alt="Platform" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-10B981?style=flat-square" alt="License GPL-3.0" /></a>
     <a href="https://github.com/hahnec/color-matcher"><img src="https://img.shields.io/badge/powered%20by-color--matcher-722ED1?style=flat-square" alt="Powered by color-matcher" /></a>
@@ -30,7 +30,7 @@
 
 <div align="center">
   <a href="docs/media/matchtone-demo.mp4">
-    <img src="docs/media/matchtone-demo.gif" alt="MatchTone Live Workflow Simulation — click for 1080p MP4" width="100%" />
+    <img src="docs/media/matchtone-demo.gif?v=0.1.3" alt="MatchTone Live Workflow Simulation — click for 1080p MP4" width="100%" />
   </a>
   <p><sub>Click the preview above to watch the full 1080p simulation video (<code>docs/media/matchtone-demo.mp4</code>).</sub></p>
 </div>
@@ -49,12 +49,12 @@
 
 Every example below was processed directly inside **MatchTone** (`100%` strength, zero manual adjustments) using real-world photographs.
 
-|                                          Source Photo (Before)                                           |                                       Color Reference (Target Mood)                                       |                                          MatchTone Result (After)                                          |
-| :------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------: |
-|    <img src="docs/media/examples/landscape-source.jpg" alt="Alpine Lake Source Photo" width="280" />     | <img src="docs/media/examples/landscape-reference.jpg" alt="Golden Sunset Reference Photo" width="280" /> |    <img src="docs/media/examples/landscape-matched.jpg" alt="Alpine Lake Matched Result" width="280" />    |
-|                    **Daylight Alpine Lake**<br/><sub>Cool midday mountain light</sub>                    |                    **Golden Hour Sunset**<br/><sub>Warm amber & magenta horizon</sub>                     |                **Golden Hour Grade**<br/><sub>Matched warmth with natural water & sky</sub>                |
-| <img src="docs/media/examples/portrait-source.jpg" alt="Natural Daylight Portrait Source" width="280" /> |     <img src="docs/media/examples/portrait-reference.jpg" alt="Moody Cinema Reference" width="280" />     | <img src="docs/media/examples/portrait-matched.jpg" alt="Cinematic Portrait Matched Result" width="280" /> |
-|              **Natural Daylight Portrait**<br/><sub>Neutral outdoor skin & background</sub>              |                    **Teal & Amber Cinema**<br/><sub>Moody tungsten-teal contrast</sub>                    |           **Cinematic Portrait Grade**<br/><sub>Smooth teal shadows & natural skin warmth</sub>            |
+|                                               Source Photo (Before)                                               |                                           Color Reference (Target Mood)                                           |                                               MatchTone Result (After)                                               |
+| :---------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------: |
+|     <img src="docs/media/examples/landscape-source.jpg?v=0.1.3" alt="Alpine Lake Source Photo" width="280" />     | <img src="docs/media/examples/landscape-reference.jpg?v=0.1.3" alt="Golden Sunset Reference Photo" width="280" /> |     <img src="docs/media/examples/landscape-matched.jpg?v=0.1.3" alt="Alpine Lake Matched Result" width="280" />     |
+|                        **Daylight Alpine Lake**<br/><sub>Cool midday mountain light</sub>                         |                        **Golden Hour Sunset**<br/><sub>Warm amber & magenta horizon</sub>                         |                     **Golden Hour Grade**<br/><sub>Matched warmth with natural water & sky</sub>                     |
+| <img src="docs/media/examples/cityscape-source.jpg?v=0.1.3" alt="London Daylight Cityscape Source" width="280" /> |    <img src="docs/media/examples/cityscape-reference.jpg?v=0.1.3" alt="Moody Cinema Reference" width="280" />     | <img src="docs/media/examples/cityscape-matched.jpg?v=0.1.3" alt="Cinematic Cityscape Matched Result" width="280" /> |
+|                  **London Daylight Cityscape**<br/><sub>Hazy midday skyline & Thames river</sub>                  |                      **Teal & Amber Cinema**<br/><sub>Moody storm clouds & golden rays</sub>                      |                 **Cinematic Cityscape Grade**<br/><sub>Smooth golden horizon & deep teal river</sub>                 |
 
 ---
 
@@ -63,14 +63,14 @@ Every example below was processed directly inside **MatchTone** (`100%` strength
 <table>
   <tr>
     <td width="50%" align="center">
-      <img src="docs/media/app-inputs-landscape.png" alt="Dual Dropzone Input Stage" width="100%" />
+      <img src="docs/media/app-inputs-landscape.png?v=0.1.3" alt="Dual Dropzone Input Stage" width="100%" />
       <br />
       <strong>1. Drop Your Photo & Reference</strong>
       <br />
       <sub>Side-by-side cards show resolution, format badge, and instant Swap / Clear controls.</sub>
     </td>
     <td width="50%" align="center">
-      <img src="docs/media/app-split-landscape-50.png" alt="Interactive Split Comparison Slider" width="100%" />
+      <img src="docs/media/app-split-landscape-50.png?v=0.1.3" alt="Interactive Split Comparison Slider" width="100%" />
       <br />
       <strong>2. Scrub the Live Split Comparison</strong>
       <br />
@@ -79,14 +79,14 @@ Every example below was processed directly inside **MatchTone** (`100%` strength
   </tr>
   <tr>
     <td width="50%" align="center">
-      <img src="docs/media/app-split-portrait-50.png" alt="Portrait Color Transfer in MatchTone" width="100%" />
+      <img src="docs/media/app-split-cityscape-50.png?v=0.1.3" alt="Cinematic Cityscape Color Transfer in MatchTone" width="100%" />
       <br />
       <strong>3. Dial In Blend Strength & Export Format</strong>
       <br />
       <sub>Adjust the 0–100% Strength slider with instant live blending and export to PNG, JPG, WEBP, or TIFF.</sub>
     </td>
     <td width="50%" align="center">
-      <img src="docs/media/app-batch-real.png" alt="Batch Folder Processing Mode" width="100%" />
+      <img src="docs/media/app-batch-real.png?v=0.1.3" alt="Batch Folder Processing Mode" width="100%" />
       <br />
       <strong>4. Grade an Entire Shoot in Batch Mode</strong>
       <br />

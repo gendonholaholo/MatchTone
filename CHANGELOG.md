@@ -5,6 +5,13 @@ All notable changes to **MatchTone** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] - 2026-11-09
+
+### Added
+
+- Multi-platform GitHub Actions release pipeline (`.github/workflows/release.yml`) and published GitHub Releases (`macOS .dmg / .zip`, `Windows .exe`, and `Linux .AppImage`).
+- Replaced the second `README.md` showcase with the London Tower Bridge cinematic cityscape grade (`cityscape-source.jpg`, `cityscape-reference.jpg`, `cityscape-matched.jpg`, `app-split-cityscape-50.png`) and preserved warm golden sky highlights alongside cool specular eye/highlight protection.
+
 ## [0.1.2] - 2026-11-09
 
 ### Changed

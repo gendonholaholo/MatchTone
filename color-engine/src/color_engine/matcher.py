@@ -331,21 +331,25 @@ def _apply_photographic_luma_lock(
     src_ycbcr = np.asarray(src_rgb.convert("YCbCr"), dtype=np.float64)
     pal_ycbcr = np.asarray(pal_img.convert("YCbCr"), dtype=np.float64)
 
-    # Retain original luminance structure so skies/walls never band and shadows stay crisp
-    luma_keep = 0.70 if cond_val > 150.0 else 0.65
+    # Retain 60% original luminance so skies never band and shadow detail stays crisp
+    luma_keep = 0.60
     y_orig = src_ycbcr[:, :, 0] / 255.0
     y_pal = pal_ycbcr[:, :, 0] / 255.0
     y_blend = luma_keep * y_orig + (1.0 - luma_keep) * y_pal
 
     # Gentle filmic S-curve toe/shoulder roll-off
-    y_filmic = np.clip(y_blend - 0.045 * np.sin(2.0 * np.pi * y_blend), 0.0, 1.0)
+    y_filmic = np.clip(y_blend - 0.055 * np.sin(2.0 * np.pi * y_blend), 0.0, 1.0)
 
-    chroma_scale = 1.08 if cond_val > 150.0 else 1.12
+    chroma_scale = 1.15
     cb_out = 128.0 + (pal_ycbcr[:, :, 1] - 128.0) * chroma_scale
     cr_out = 128.0 + (pal_ycbcr[:, :, 2] - 128.0) * chroma_scale
 
-    # Specular highlight guard keeps eye sclera, teeth, and bright clouds from heavy tinting
-    hi_mask = np.clip((y_orig - 0.70) / 0.25, 0.0, 1.0) * 0.75
+    # Specular highlight guard:
+    # 1) Prevent cool cyan blowups across all bright highlights (y > 0.70)
+    # 2) Keep extreme specular peaks (y > 0.86, e.g. eye sclera/teeth) neutral white
+    cool_mask = np.clip((y_orig - 0.70) / 0.25, 0.0, 1.0) * 0.85
+    spec_mask = np.clip((y_orig - 0.84) / 0.10, 0.0, 1.0) * 0.85
+    hi_mask = np.where(cb_out > src_ycbcr[:, :, 1], np.maximum(cool_mask, spec_mask), spec_mask)
     cb_out = cb_out * (1.0 - hi_mask) + src_ycbcr[:, :, 1] * hi_mask
     cr_out = cr_out * (1.0 - hi_mask) + src_ycbcr[:, :, 2] * hi_mask
 
@@ -399,11 +403,8 @@ def run_color_transfer(
 
     if method in ("mkl", "mvgd"):
         palette_arr = reg_mkl
-    elif cond_val > 150.0:
-        # Ill-conditioned portrait covariance: prioritize regularized solver
-        palette_arr = np.clip(0.90 * reg_mkl + 0.10 * clipped_raw, 0.0, 1.0)
     else:
-        palette_arr = np.clip(0.85 * reg_mkl + 0.15 * clipped_raw, 0.0, 1.0)
+        palette_arr = np.clip(0.50 * reg_mkl + 0.50 * clipped_raw, 0.0, 1.0)
 
     transferred_rgb = _apply_photographic_luma_lock(
         src.rgb,
